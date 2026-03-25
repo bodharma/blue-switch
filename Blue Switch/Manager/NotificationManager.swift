@@ -1,4 +1,5 @@
 import UserNotifications
+import os
 
 /// Protocol defining the interface for managing system notifications
 protocol NotificationManaging {
@@ -30,11 +31,11 @@ final class NotificationManager: NotificationManaging {
       case .notDetermined:
         requestAuthorization()
       case .denied:
-        print("User has denied notifications")
+        Log.app.error("User has denied notifications")
       case .authorized, .provisional, .ephemeral:
-        print("Notifications are authorized")
+        Log.app.info("Notifications are authorized")
       @unknown default:
-        print("Unknown notification authorization status")
+        Log.app.error("Unknown notification authorization status")
       }
     }
   }
@@ -44,10 +45,10 @@ final class NotificationManager: NotificationManaging {
       options: Constants.authorizationOptions
     ) { granted, error in
       if let error = error {
-        print("Failed to request notification authorization: \(error)")
+        Log.app.error("Failed to request notification authorization: \(error)")
         return
       }
-      print("Notification authorization was \(granted ? "granted" : "denied")")
+      Log.app.info("Notification authorization was \(granted ? "granted" : "denied")")
     }
   }
 
@@ -61,7 +62,7 @@ final class NotificationManager: NotificationManaging {
 
     UNUserNotificationCenter.current().add(request) { error in
       if let error = error {
-        print("Failed to show notification: \(error)")
+        Log.app.error("Failed to show notification: \(error)")
       }
     }
   }
