@@ -30,6 +30,7 @@
 		AA0001052CE9D690004D45F0 /* DataMigrator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001022CE9D690004D45F0 /* DataMigrator.swift */; };
 		AA0002012CE9D690004D45F0 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0002002CE9D690004D45F0 /* DeviceManager.swift */; };
 		AA0003012CE9D690004D45F0 /* BatteryMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */; };
+		AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004002CE9D690004D45F0 /* ActionRunner.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		AA0001022CE9D690004D45F0 /* DataMigrator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataMigrator.swift; sourceTree = "<group>"; };
 		AA0002002CE9D690004D45F0 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryMonitor.swift; sourceTree = "<group>"; };
+		AA0004002CE9D690004D45F0 /* ActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +127,7 @@
 		076AB1FF2CE9D690004D45F0 /* Manager */ = {
 			isa = PBXGroup;
 			children = (
+				AA0004002CE9D690004D45F0 /* ActionRunner.swift */,
 				AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */,
 				076AB1FB2CE9D690004D45F0 /* ConnectionManager.swift */,
 				AA0002002CE9D690004D45F0 /* DeviceManager.swift */,
@@ -409,6 +412,7 @@
 				AA0001052CE9D690004D45F0 /* DataMigrator.swift in Sources */,
 				AA0002012CE9D690004D45F0 /* DeviceManager.swift in Sources */,
 				AA0003012CE9D690004D45F0 /* BatteryMonitor.swift in Sources */,
+				AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
