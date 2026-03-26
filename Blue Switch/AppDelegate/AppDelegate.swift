@@ -10,7 +10,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     @ObservedObject private var networkStore = NetworkDeviceStore.shared
 
     private let deviceManager = DeviceManager.shared
-    private let batteryMonitor = BatteryMonitor()
+    let batteryMonitor = BatteryMonitor()
     private let peerNetwork = PeerNetwork()
     private let audioManager = AudioManager()
     private let appCommunicator = AppCommunicator()
@@ -180,6 +180,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
         handleSwitchDevice(device)
+    }
+
+    /// Menu-bar device row action: extracts the device ID stored in `representedObject`
+    /// and delegates to the core switching logic.
+    @objc func menuSwitchDevice(_ sender: NSMenuItem) {
+        guard let deviceId = sender.representedObject as? String,
+              let device = deviceManager.registeredDevices.first(where: { $0.id == deviceId }) else {
+            return
+        }
+        handleSwitchDevice(device)
+    }
+
+    /// "Switch All" menu item action: switches every registered device in order.
+    @objc func switchAllDevices() {
+        handleSwitchAll()
     }
 
     private func showMenu() {
