@@ -31,6 +31,7 @@
 		AA0002012CE9D690004D45F0 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0002002CE9D690004D45F0 /* DeviceManager.swift */; };
 		AA0003012CE9D690004D45F0 /* BatteryMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */; };
 		AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004002CE9D690004D45F0 /* ActionRunner.swift */; };
+		AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005002CE9D690004D45F0 /* PeerNetwork.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -79,6 +80,7 @@
 		AA0002002CE9D690004D45F0 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryMonitor.swift; sourceTree = "<group>"; };
 		AA0004002CE9D690004D45F0 /* ActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
+		AA0005002CE9D690004D45F0 /* PeerNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerNetwork.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -132,6 +134,7 @@
 				076AB1FB2CE9D690004D45F0 /* ConnectionManager.swift */,
 				AA0002002CE9D690004D45F0 /* DeviceManager.swift */,
 				076AB1FC2CE9D690004D45F0 /* NotificationManager.swift */,
+				AA0005002CE9D690004D45F0 /* PeerNetwork.swift */,
 				076AB1FD2CE9D690004D45F0 /* ServiceBrowser.swift */,
 				076AB1FE2CE9D690004D45F0 /* ServicePublisher.swift */,
 			);
@@ -413,6 +416,7 @@
 				AA0002012CE9D690004D45F0 /* DeviceManager.swift in Sources */,
 				AA0003012CE9D690004D45F0 /* BatteryMonitor.swift in Sources */,
 				AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */,
+				AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
