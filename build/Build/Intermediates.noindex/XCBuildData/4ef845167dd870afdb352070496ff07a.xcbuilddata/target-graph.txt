@@ -1,2 +1,0 @@
-Target dependency graph (1 target)
-Target 'Blue Switch' in project 'Blue Switch' (no dependencies)
