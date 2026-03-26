@@ -1,0 +1,111 @@
+{
+  "" : {
+    "const-values" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary.swiftconstvalues",
+    "dependencies" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary.d",
+    "diagnostics" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary.dia",
+    "emit-module-dependencies" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary-emit-module.dia",
+    "pch" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue Switch-primary.swiftdeps"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/AppDelegate/AppDelegate.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/AppDelegate.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/AppDelegate.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/AppDelegate.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/AppDelegate/Blue_SwitchApp.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue_SwitchApp.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue_SwitchApp.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/Blue_SwitchApp.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/ContentView.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Extensions/IOBluetoothDevice+Extension.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/IOBluetoothDevice+Extension.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/IOBluetoothDevice+Extension.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/IOBluetoothDevice+Extension.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Extensions/NetworkDevice+HealthCheck.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDevice+HealthCheck.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDevice+HealthCheck.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDevice+HealthCheck.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Manager/BluetoothManager.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothManager.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothManager.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothManager.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Manager/ConnectionManager.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ConnectionManager.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ConnectionManager.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ConnectionManager.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Manager/NotificationManager.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NotificationManager.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NotificationManager.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NotificationManager.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Manager/ServiceBrowser.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ServiceBrowser.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ServiceBrowser.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ServiceBrowser.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Manager/ServicePublisher.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ServicePublisher.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ServicePublisher.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/ServicePublisher.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Model/Entity/BluetoothPeripheral.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheral.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheral.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheral.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Model/Entity/NetworkDevice.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDevice.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDevice.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDevice.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Model/Store/BluetoothPeripheralStore.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheralStore.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheralStore.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheralStore.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/Model/Store/NetworkDeviceStore.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDeviceStore.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDeviceStore.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDeviceStore.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/View/MenuBar/MenuBarView.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/MenuBarView.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/MenuBarView.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/MenuBarView.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/View/Settings/BluetoothPeripheralSettingsView.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheralSettingsView.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheralSettingsView.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/BluetoothPeripheralSettingsView.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/View/Settings/NetworkDeviceManagementView.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDeviceManagementView.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDeviceManagementView.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/NetworkDeviceManagementView.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/View/Settings/OtherSettingsView.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/OtherSettingsView.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/OtherSettingsView.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/OtherSettingsView.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/View/Settings/SettingsView.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/SettingsView.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/SettingsView.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/SettingsView.o"
+  },
+  "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/bodharma/dev/repos/personal/blue-switch/build/Build/Intermediates.noindex/Blue Switch.build/Release/Blue Switch.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "source": "/Users/bodharma/dev/repos/personal/blue-switch/Blue Switch/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Hello, world!",
+        "location": {
+          "startingColumn": 10,
+          "startingLine": 12
+        }
+      }
+    ]
+  },
+  "version": 1
+}
