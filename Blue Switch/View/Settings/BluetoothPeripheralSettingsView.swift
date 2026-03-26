@@ -1,166 +1,140 @@
 import SwiftUI
 
-/// View responsible for managing Bluetooth peripheral device connections and settings
-struct BluetoothPeripheralSettingsView: View {
+// MARK: - DeviceSettingsView
+
+/// View for managing registered and available Bluetooth devices
+struct DeviceSettingsView: View {
   // MARK: - Dependencies
 
-  @StateObject private var deviceManager = DeviceManager.shared
+  @ObservedObject private var deviceManager = DeviceManager.shared
+
+  // MARK: - Properties
+
+  @State private var prefs = (try? AppPreferences.load()) ?? AppPreferences()
 
   // MARK: - View Content
 
-  private var content: some View {
-    Form {
-      RegisteredDevicesSectionView(
-        devices: deviceManager.registeredDevices,
-        deviceStates: deviceManager.deviceStates,
-        onDeviceToggleConnection: handleDeviceToggleConnection,
-        onDeviceRemove: handleDeviceRemove
-      )
+  var body: some View {
+    VStack(alignment: .leading, spacing: 0) {
+      List {
+        Section(header: Text("Registered Devices")) {
+          ForEach(prefs.devices) { device in
+            DeviceRow(
+              device: device,
+              state: deviceManager.deviceStates[device.id] ?? .disconnected
+            )
+          }
+          .onDelete(perform: removeDevices)
+        }
 
-      AvailableDevicesSectionView(
-        devices: deviceManager.fetchPairedDevices().filter { paired in
-          !deviceManager.registeredDevices.contains(where: { $0.id == paired.id })
-        },
-        onDeviceAdd: handleDeviceAdd
-      )
+        Section(header: Text("Available Devices")) {
+          let available = deviceManager.fetchPairedDevices().filter { paired in
+            !prefs.devices.contains(where: { $0.id == paired.id })
+          }
+          if available.isEmpty {
+            Text("No new devices found")
+              .foregroundColor(.secondary)
+          } else {
+            ForEach(available) { device in
+              HStack {
+                Image(systemName: iconForDeviceType(device.type))
+                Text(device.name)
+                Spacer()
+                Button("Add") {
+                  addDevice(device)
+                }
+              }
+            }
+          }
+        }
+      }
     }
     .onAppear {
       deviceManager.refreshStates()
     }
   }
 
-  var body: some View {
-    if #available(macOS 13.0, *) {
-      content.formStyle(.grouped)
-    } else {
-      content
-    }
-  }
-
   // MARK: - Private Methods
 
-  private func handleDeviceToggleConnection(_ device: Device) {
-    let state = deviceManager.deviceStates[device.id] ?? .disconnected
-    if state == .connected {
-      deviceManager.disconnect(device) { _ in }
-    } else {
-      deviceManager.connect(device) { _ in }
-    }
-  }
-
-  private func handleDeviceRemove(_ device: Device) {
-    deviceManager.unregister(device)
-  }
-
-  private func handleDeviceAdd(_ device: Device) {
+  private func addDevice(_ device: Device) {
+    prefs.devices.append(device)
     deviceManager.register(device)
+    try? prefs.save()
   }
-}
 
-// MARK: - Supporting Views
-
-/// Section for displaying registered Bluetooth devices
-private struct RegisteredDevicesSectionView: View {
-  let devices: [Device]
-  let deviceStates: [String: DeviceConnectionState]
-  let onDeviceToggleConnection: (Device) -> Void
-  let onDeviceRemove: (Device) -> Void
-
-  var body: some View {
-    Section(header: Text("Registered Peripherals")) {
-      if devices.isEmpty {
-        Text("No registered peripherals")
-          .foregroundColor(.secondary)
-      } else {
-        DeviceListView(
-          devices: devices,
-          deviceStates: deviceStates,
-          showConnectionStatus: true,
-          primaryAction: onDeviceToggleConnection,
-          secondaryAction: onDeviceRemove
-        )
-      }
+  private func removeDevices(at offsets: IndexSet) {
+    for index in offsets {
+      let device = prefs.devices[index]
+      deviceManager.unregister(device)
     }
+    prefs.devices.remove(atOffsets: offsets)
+    try? prefs.save()
   }
 }
 
-/// Section for displaying available Bluetooth devices
-private struct AvailableDevicesSectionView: View {
-  let devices: [Device]
-  let onDeviceAdd: (Device) -> Void
+// MARK: - DeviceRow
 
-  var body: some View {
-    Section(header: Text("Available Peripherals")) {
-      if devices.isEmpty {
-        Text("No available peripherals found")
-          .foregroundColor(.secondary)
-      } else {
-        DeviceListView(
-          devices: devices,
-          deviceStates: [:],
-          showConnectionStatus: false,
-          primaryAction: onDeviceAdd
-        )
-      }
-    }
-  }
-}
+/// Row view displaying an individual device with its connection state
+struct DeviceRow: View {
+  // MARK: - Properties
 
-/// List view for displaying Bluetooth devices
-private struct DeviceListView: View {
-  let devices: [Device]
-  let deviceStates: [String: DeviceConnectionState]
-  let showConnectionStatus: Bool
-  let primaryAction: (Device) -> Void
-  var secondaryAction: ((Device) -> Void)?
-
-  var body: some View {
-    List {
-      ForEach(devices) { device in
-        DeviceRowView(
-          device: device,
-          state: deviceStates[device.id] ?? .disconnected,
-          showConnectionStatus: showConnectionStatus,
-          primaryAction: { primaryAction(device) },
-          secondaryAction: secondaryAction.map { action in
-            { action(device) }
-          }
-        )
-      }
-    }
-  }
-}
-
-/// Row view for displaying individual Bluetooth device
-private struct DeviceRowView: View {
   let device: Device
   let state: DeviceConnectionState
-  let showConnectionStatus: Bool
-  let primaryAction: () -> Void
-  var secondaryAction: (() -> Void)?
+
+  // MARK: - View Content
 
   var body: some View {
     HStack {
-      Text(device.name)
-      Spacer()
-      if showConnectionStatus {
-        Button(state == .connected ? "Disconnect" : "Connect", action: primaryAction)
-        Button(action: { secondaryAction?() }) {
-          Image(systemName: "minus.circle")
-            .foregroundColor(.red)
-        }
-      } else {
-        Button(action: primaryAction) {
-          Image(systemName: "plus.circle")
-            .foregroundColor(.blue)
-        }
+      Image(systemName: iconForDeviceType(device.type))
+        .foregroundColor(state == .connected ? .green : .secondary)
+      VStack(alignment: .leading) {
+        Text(device.name)
+          .font(.body)
+        Text(device.type.rawValue.capitalized)
+          .font(.caption)
+          .foregroundColor(.secondary)
       }
+      Spacer()
+      Text(stateText)
+        .font(.caption)
+        .foregroundColor(stateColor)
     }
+  }
+
+  // MARK: - Private Computed Properties
+
+  private var stateText: String {
+    switch state {
+    case .connected: return "Connected"
+    case .connecting: return "Connecting..."
+    case .disconnecting: return "Disconnecting..."
+    case .disconnected: return "Disconnected"
+    }
+  }
+
+  private var stateColor: Color {
+    switch state {
+    case .connected: return .green
+    case .connecting, .disconnecting: return .orange
+    case .disconnected: return .secondary
+    }
+  }
+}
+
+// MARK: - Helpers
+
+private func iconForDeviceType(_ type: DeviceType) -> String {
+  switch type {
+  case .trackpad: return "rectangle.inset.filled"
+  case .keyboard: return "keyboard.fill"
+  case .mouse: return "computermouse.fill"
+  case .headphones: return "headphones"
+  case .other: return "circle.fill"
   }
 }
 
 // MARK: - Preview
 
 #Preview {
-  BluetoothPeripheralSettingsView()
+  DeviceSettingsView()
 }
