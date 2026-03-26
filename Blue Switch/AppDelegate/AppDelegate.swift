@@ -246,8 +246,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 guard let self else { return }
                 Log.app.info("Peer disconnect result for \(device.name): \(peerSuccess)")
 
-                // Small delay to let peer release the BT device
-                DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                // Delay to let peer's BT stack fully release the device
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
                     self.deviceManager.connect(device) { [weak self] success in
                     guard let self else { return }
                     if success {

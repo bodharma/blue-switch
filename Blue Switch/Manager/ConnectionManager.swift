@@ -235,31 +235,22 @@ final class ConnectionManager: NetworkConnectionManaging {
 
     case .disconnectDevice:
       // message is the MAC address of the device to disconnect
+      // IMPORTANT: Only closeConnection — do NOT remove/unpair.
+      // The other Mac needs the pairing keys to remain so it can reconnect.
       let macAddress = message.trimmingCharacters(in: .whitespacesAndNewlines)
       Log.network.info("Received DISCONNECT_DEVICE for \(macAddress)")
-      if let device = DeviceManager.shared.registeredDevices.first(where: { $0.id == macAddress }) {
-        DeviceManager.shared.disconnect(device) { success in
-          if success {
-            Log.network.info("Disconnected \(device.name) via peer command")
-          } else {
-            Log.network.error("Failed to disconnect \(device.name) via peer command")
-          }
-        }
-        send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
-      } else {
-        // Device not registered on this Mac — try direct IOBluetooth disconnect
-        Log.network.info("Device \(macAddress) not registered, attempting direct disconnect")
-        if let btDevice = IOBluetoothDevice(addressString: macAddress) {
-          if btDevice.responds(to: Selector(("remove"))) {
-            btDevice.perform(Selector(("remove")))
-          }
-          btDevice.closeConnection()
-          Log.network.info("Direct disconnected \(macAddress)")
+      if let btDevice = IOBluetoothDevice(addressString: macAddress) {
+        if btDevice.isConnected() {
+          let status = btDevice.closeConnection()
+          Log.network.info("closeConnection for \(macAddress): \(status)")
           send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
         } else {
-          Log.network.error("Cannot find IOBluetoothDevice for \(macAddress)")
-          send(message: DeviceCommand.operationFailed.rawValue, to: connection)
+          Log.network.info("Device \(macAddress) already disconnected")
+          send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
         }
+      } else {
+        Log.network.error("Cannot find IOBluetoothDevice for \(macAddress)")
+        send(message: DeviceCommand.operationFailed.rawValue, to: connection)
       }
 
     default:

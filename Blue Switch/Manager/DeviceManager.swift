@@ -38,13 +38,14 @@ final class DeviceManager: NSObject, ObservableObject {
 
     private var centralManager: CBCentralManager?
     private var pendingPairCompletions: [String: (Bool) -> Void] = [:]
+    private var pendingConnectCompletions: [String: (Bool) -> Void] = [:]
     private var connectTimeouts: [String: DispatchWorkItem] = [:]
     private var retryCount: [String: Int] = [:]
 
     private let queue = DispatchQueue(label: "com.blueswitch.devicemanager", qos: .userInitiated)
-    private static let connectTimeoutSeconds: TimeInterval = 10
+    private static let connectTimeoutSeconds: TimeInterval = 20
     private static let disconnectTimeoutSeconds: TimeInterval = 5
-    private static let maxRetries = 1
+    private static let maxRetries = 2
 
     // MARK: - Initialization
 
@@ -148,21 +149,18 @@ final class DeviceManager: NSObject, ObservableObject {
 
         let pairResult = pair?.start() ?? kIOReturnError
         if pairResult != kIOReturnSuccess {
-            // Pairing start failed -- device may already be paired, try direct connect
-            Log.bluetooth.info("Pair start returned \(pairResult), attempting direct connection for \(device.name)")
-            cancelTimeout(for: device.id)
+            // Pairing start failed -- device may already be paired
+            Log.bluetooth.info("Pair start returned \(pairResult) for \(device.name)")
             pendingPairCompletions.removeValue(forKey: device.id)
 
-            let status = ioDevice.openConnection()
-            if status == kIOReturnSuccess {
-                DispatchQueue.main.async {
-                    self.deviceStates[device.id] = .connected
-                    self.retryCount[device.id] = 0
-                    Log.bluetooth.info("Connected to \(device.name) (direct)")
-                    completion(true)
-                }
-            } else {
-                Log.bluetooth.error("Direct openConnection failed for \(device.name): \(status)")
+            // Use async openConnection with delegate callback
+            Log.bluetooth.info("Attempting async openConnection for \(device.name)...")
+            pendingConnectCompletions[device.id] = completion
+            let status = ioDevice.openConnection(self, withPageTimeout: 10000, authenticationRequired: false)
+            if status != kIOReturnSuccess {
+                Log.bluetooth.error("openConnection(target:) returned \(status) for \(device.name)")
+                pendingConnectCompletions.removeValue(forKey: device.id)
+                cancelTimeout(for: device.id)
                 handleConnectFailure(device: device, completion: completion)
             }
         }
@@ -387,6 +385,44 @@ extension DeviceManager: IOBluetoothDevicePairDelegate {
 
         if let completion = pendingPairCompletions.removeValue(forKey: address) {
             completion(success)
+        }
+    }
+}
+
+// MARK: - IOBluetoothDevice Connection Callback
+
+extension DeviceManager {
+    /// Called by IOBluetooth when an async openConnection completes
+    func connectionComplete(_ device: IOBluetoothDevice!, status: IOReturn) {
+        guard let address = device?.addressString else { return }
+
+        cancelTimeout(for: address)
+
+        let success = status == kIOReturnSuccess && (device?.isConnected() ?? false)
+
+        if success {
+            Log.bluetooth.info("Async connection succeeded for \(address)")
+            DispatchQueue.main.async {
+                self.deviceStates[address] = .connected
+                self.retryCount[address] = 0
+            }
+        } else {
+            Log.bluetooth.error("Async connection failed for \(address): \(status)")
+        }
+
+        if let completion = pendingConnectCompletions.removeValue(forKey: address) {
+            if success {
+                DispatchQueue.main.async { completion(true) }
+            } else {
+                // Find the device to retry
+                if let dev = registeredDevices.first(where: { $0.id == address }) {
+                    DispatchQueue.main.async {
+                        self.handleConnectFailure(device: dev, completion: completion)
+                    }
+                } else {
+                    DispatchQueue.main.async { completion(false) }
+                }
+            }
         }
     }
 }
