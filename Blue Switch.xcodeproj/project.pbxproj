@@ -23,6 +23,7 @@
 		076AB22A2CE9D690004D45F0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 076AB2102CE9D690004D45F0 /* SettingsView.swift */; };
 		076AB22C2CE9D690004D45F0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 076AB2072CE9D690004D45F0 /* Preview Assets.xcassets */; };
 		076AB22D2CE9D690004D45F0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 076AB2132CE9D690004D45F0 /* Assets.xcassets */; };
+		6EC904602F74CCF30003107F /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = 6EC9045F2F74CCF30003107F /* ArgumentParser */; };
 		AA0000012CE9D690004D45F0 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0000002CE9D690004D45F0 /* Log.swift */; };
 		AA0001032CE9D690004D45F0 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001002CE9D690004D45F0 /* Device.swift */; };
 		AA0001042CE9D690004D45F0 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0001012CE9D690004D45F0 /* AppPreferences.swift */; };
@@ -31,8 +32,8 @@
 		AA0003012CE9D690004D45F0 /* BatteryMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */; };
 		AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004002CE9D690004D45F0 /* ActionRunner.swift */; };
 		AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005002CE9D690004D45F0 /* PeerNetwork.swift */; };
-		AA000701 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000700 /* AudioManager.swift */; };
 		AA000601 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000600 /* ShortcutManager.swift */; };
+		AA000701 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000700 /* AudioManager.swift */; };
 		AA000801 /* SocketProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000800 /* SocketProtocol.swift */; };
 		AA000803 /* AppCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000802 /* AppCommunicator.swift */; };
 		AA000901 /* GeneralSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000900 /* GeneralSettingsView.swift */; };
@@ -55,6 +56,18 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		6EC904552F74CC630003107F /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		076AB1F42CE9D690004D45F0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		076AB1F52CE9D690004D45F0 /* Blue_SwitchApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Blue_SwitchApp.swift; sourceTree = "<group>"; };
@@ -76,6 +89,7 @@
 		077473F22CD8426D00571393 /* Blue Switch.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blue Switch.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		077474052CD8426F00571393 /* Blue SwitchTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blue SwitchTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0774740F2CD8426F00571393 /* Blue SwitchUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Blue SwitchUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6EC904572F74CC630003107F /* blueswitch */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = blueswitch; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA0000002CE9D690004D45F0 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
 		AA0001002CE9D690004D45F0 /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		AA0001012CE9D690004D45F0 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
@@ -84,12 +98,20 @@
 		AA0003002CE9D690004D45F0 /* BatteryMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BatteryMonitor.swift; sourceTree = "<group>"; };
 		AA0004002CE9D690004D45F0 /* ActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
 		AA0005002CE9D690004D45F0 /* PeerNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerNetwork.swift; sourceTree = "<group>"; };
-		AA000700 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		AA000600 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
+		AA000700 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		AA000800 /* SocketProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProtocol.swift; sourceTree = "<group>"; };
 		AA000802 /* AppCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommunicator.swift; sourceTree = "<group>"; };
 		AA000900 /* GeneralSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeneralSettingsView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		6EC904582F74CC630003107F /* blueswitch */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = blueswitch;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		077473EF2CD8426D00571393 /* Frameworks */ = {
@@ -110,6 +132,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6EC904542F74CC630003107F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6EC904602F74CCF30003107F /* ArgumentParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -201,7 +231,7 @@
 			children = (
 				076AB20B2CE9D690004D45F0 /* BluetoothPeripheralSettingsView.swift */,
 				076AB20E2CE9D690004D45F0 /* NetworkDeviceManagementView.swift */,
-					076AB2102CE9D690004D45F0 /* SettingsView.swift */,
+				076AB2102CE9D690004D45F0 /* SettingsView.swift */,
 				AA000900 /* GeneralSettingsView.swift */,
 			);
 			path = Settings;
@@ -214,22 +244,6 @@
 				076AB2112CE9D690004D45F0 /* Settings */,
 			);
 			path = View;
-			sourceTree = "<group>";
-		};
-		AA0000032CE9D690004D45F0 /* Logging */ = {
-			isa = PBXGroup;
-			children = (
-				AA0000002CE9D690004D45F0 /* Log.swift */,
-			);
-			path = Logging;
-			sourceTree = "<group>";
-		};
-		AA0001062CE9D690004D45F0 /* Migration */ = {
-			isa = PBXGroup;
-			children = (
-				AA0001022CE9D690004D45F0 /* DataMigrator.swift */,
-			);
-			path = Migration;
 			sourceTree = "<group>";
 		};
 		076AB2162CE9D690004D45F0 /* Blue Switch */ = {
@@ -253,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				076AB2162CE9D690004D45F0 /* Blue Switch */,
+				6EC904582F74CC630003107F /* blueswitch */,
 				077473F32CD8426D00571393 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -263,8 +278,25 @@
 				077473F22CD8426D00571393 /* Blue Switch.app */,
 				077474052CD8426F00571393 /* Blue SwitchTests.xctest */,
 				0774740F2CD8426F00571393 /* Blue SwitchUITests.xctest */,
+				6EC904572F74CC630003107F /* blueswitch */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AA0000032CE9D690004D45F0 /* Logging */ = {
+			isa = PBXGroup;
+			children = (
+				AA0000002CE9D690004D45F0 /* Log.swift */,
+			);
+			path = Logging;
+			sourceTree = "<group>";
+		};
+		AA0001062CE9D690004D45F0 /* Migration */ = {
+			isa = PBXGroup;
+			children = (
+				AA0001022CE9D690004D45F0 /* DataMigrator.swift */,
+			);
+			path = Migration;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -329,6 +361,29 @@
 			productReference = 0774740F2CD8426F00571393 /* Blue SwitchUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		6EC904562F74CC630003107F /* blueswitch */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6EC9045D2F74CC630003107F /* Build configuration list for PBXNativeTarget "blueswitch" */;
+			buildPhases = (
+				6EC904532F74CC630003107F /* Sources */,
+				6EC904542F74CC630003107F /* Frameworks */,
+				6EC904552F74CC630003107F /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6EC904582F74CC630003107F /* blueswitch */,
+			);
+			name = blueswitch;
+			packageProductDependencies = (
+				6EC9045F2F74CCF30003107F /* ArgumentParser */,
+			);
+			productName = blueswitch;
+			productReference = 6EC904572F74CC630003107F /* blueswitch */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -336,7 +391,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 1610;
 				TargetAttributes = {
 					077473F12CD8426D00571393 = {
@@ -350,6 +405,9 @@
 						CreatedOnToolsVersion = 16.1;
 						TestTargetID = 077473F12CD8426D00571393;
 					};
+					6EC904562F74CC630003107F = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 				};
 			};
 			buildConfigurationList = 077473ED2CD8426D00571393 /* Build configuration list for PBXProject "Blue Switch" */;
@@ -362,6 +420,7 @@
 			mainGroup = 077473E92CD8426D00571393;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				6EC9045E2F74CCF30003107F /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 077473F32CD8426D00571393 /* Products */;
@@ -371,6 +430,7 @@
 				077473F12CD8426D00571393 /* Blue Switch */,
 				077474042CD8426F00571393 /* Blue SwitchTests */,
 				0774740E2CD8426F00571393 /* Blue SwitchUITests */,
+				6EC904562F74CC630003107F /* blueswitch */,
 			);
 		};
 /* End PBXProject section */
@@ -444,6 +504,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		0774740B2CD8426F00571393 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6EC904532F74CC630003107F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -708,6 +775,34 @@
 			};
 			name = Release;
 		};
+		6EC9045B2F74CC630003107F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3Q2WWR3D5V;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		6EC9045C2F74CC630003107F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 3Q2WWR3D5V;
+				ENABLE_HARDENED_RUNTIME = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.1;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -747,7 +842,35 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		6EC9045D2F74CC630003107F /* Build configuration list for PBXNativeTarget "blueswitch" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6EC9045B2F74CC630003107F /* Debug */,
+				6EC9045C2F74CC630003107F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6EC9045E2F74CCF30003107F /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.7.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6EC9045F2F74CCF30003107F /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 6EC9045E2F74CCF30003107F /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 077473EA2CD8426D00571393 /* Project object */;
 }
