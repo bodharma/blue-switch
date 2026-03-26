@@ -22,7 +22,6 @@ final class MenuBarView: MenuBarPresentable {
   // MARK: - Dependencies
 
   @ObservedObject private var networkStore = NetworkDeviceStore.shared
-  @ObservedObject private var bluetoothStore = BluetoothPeripheralStore.shared
 
   // MARK: - Public Methods
 
@@ -46,7 +45,7 @@ final class MenuBarView: MenuBarPresentable {
   private func addDeviceItems(to menu: NSMenu) {
     addNetworkDeviceItems(to: menu)
     addSeparator(to: menu)
-    addBluetoothPeripheralItems(to: menu)
+    addBluetoothDeviceItems(to: menu)
     addSeparator(to: menu)
   }
 
@@ -56,8 +55,9 @@ final class MenuBarView: MenuBarPresentable {
     }
   }
 
-  private func addBluetoothPeripheralItems(to menu: NSMenu) {
-    for device in bluetoothStore.peripherals {
+  private func addBluetoothDeviceItems(to menu: NSMenu) {
+    // TODO: Re-implement using DeviceManager.shared.registeredDevices
+    for device in DeviceManager.shared.registeredDevices {
       menu.addItem(NSMenuItem(title: device.name, action: nil, keyEquivalent: ""))
     }
   }

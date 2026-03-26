@@ -4,36 +4,29 @@ import SwiftUI
 struct BluetoothPeripheralSettingsView: View {
   // MARK: - Dependencies
 
-  @StateObject private var bluetoothStore = BluetoothPeripheralStore.shared
-
-  // MARK: - Constants
-
-  private enum Strings {
-    static let removeAll = "Remove All"
-    static let noRegistered = "No registered peripherals"
-    static let noAvailable = "No available peripherals found"
-    static let addDevice = "Add Device"
-    static let removeFromPC = "Remove from PC"
-    static let connectToPC = "Connect to PC"
-    static let removeDevice = "Remove Device"
-  }
+  @StateObject private var deviceManager = DeviceManager.shared
 
   // MARK: - View Content
 
   private var content: some View {
     Form {
-      RegisteredPeripheralsSectionView(
-        peripherals: bluetoothStore.peripherals,
-        onPeripheralToggleConnection: handlePeripheralToggleConnection,
-        onPeripheralRemove: handlePeripheralRemove
+      RegisteredDevicesSectionView(
+        devices: deviceManager.registeredDevices,
+        deviceStates: deviceManager.deviceStates,
+        onDeviceToggleConnection: handleDeviceToggleConnection,
+        onDeviceRemove: handleDeviceRemove
       )
 
-      AvailablePeripheralsSectionView(
-        peripherals: bluetoothStore.availablePeripherals,
-        onPeripheralAdd: handlePeripheralAdd
+      AvailableDevicesSectionView(
+        devices: deviceManager.fetchPairedDevices().filter { paired in
+          !deviceManager.registeredDevices.contains(where: { $0.id == paired.id })
+        },
+        onDeviceAdd: handleDeviceAdd
       )
     }
-    .onAppear(perform: handleOnAppear)
+    .onAppear {
+      deviceManager.refreshStates()
+    }
   }
 
   var body: some View {
@@ -46,91 +39,91 @@ struct BluetoothPeripheralSettingsView: View {
 
   // MARK: - Private Methods
 
-  private func handlePeripheralToggleConnection(_ peripheral: BluetoothPeripheral) {
-    if peripheral.isConnected {
-      bluetoothStore.unregisterFromPC(peripheral)
+  private func handleDeviceToggleConnection(_ device: Device) {
+    let state = deviceManager.deviceStates[device.id] ?? .disconnected
+    if state == .connected {
+      deviceManager.disconnect(device) { _ in }
     } else {
-      bluetoothStore.connectPeripheral(peripheral)
+      deviceManager.connect(device) { _ in }
     }
   }
 
-  private func handlePeripheralRemove(_ peripheral: BluetoothPeripheral) {
-    bluetoothStore.removeFromList(peripheral)
+  private func handleDeviceRemove(_ device: Device) {
+    deviceManager.unregister(device)
   }
 
-  private func handlePeripheralAdd(_ peripheral: BluetoothPeripheral) {
-    bluetoothStore.addPeripheral(peripheral)
-  }
-
-  private func handleOnAppear() {
-    bluetoothStore.fetchConnectedPeripherals()
+  private func handleDeviceAdd(_ device: Device) {
+    deviceManager.register(device)
   }
 }
 
 // MARK: - Supporting Views
 
-/// Section for displaying registered Bluetooth peripherals
-private struct RegisteredPeripheralsSectionView: View {
-  // MARK: - Properties
-
-  let peripherals: [BluetoothPeripheral]
-  let onPeripheralToggleConnection: (BluetoothPeripheral) -> Void
-  let onPeripheralRemove: (BluetoothPeripheral) -> Void
+/// Section for displaying registered Bluetooth devices
+private struct RegisteredDevicesSectionView: View {
+  let devices: [Device]
+  let deviceStates: [String: DeviceConnectionState]
+  let onDeviceToggleConnection: (Device) -> Void
+  let onDeviceRemove: (Device) -> Void
 
   var body: some View {
     Section(header: Text("Registered Peripherals")) {
-      if peripherals.isEmpty {
+      if devices.isEmpty {
         Text("No registered peripherals")
           .foregroundColor(.secondary)
       } else {
-        PeripheralListView(
-          peripherals: peripherals,
+        DeviceListView(
+          devices: devices,
+          deviceStates: deviceStates,
           showConnectionStatus: true,
-          primaryAction: onPeripheralToggleConnection,
-          secondaryAction: onPeripheralRemove
+          primaryAction: onDeviceToggleConnection,
+          secondaryAction: onDeviceRemove
         )
       }
     }
   }
 }
 
-/// Section for displaying available Bluetooth peripherals
-private struct AvailablePeripheralsSectionView: View {
-  let peripherals: [BluetoothPeripheral]
-  let onPeripheralAdd: (BluetoothPeripheral) -> Void
+/// Section for displaying available Bluetooth devices
+private struct AvailableDevicesSectionView: View {
+  let devices: [Device]
+  let onDeviceAdd: (Device) -> Void
 
   var body: some View {
     Section(header: Text("Available Peripherals")) {
-      if peripherals.isEmpty {
+      if devices.isEmpty {
         Text("No available peripherals found")
           .foregroundColor(.secondary)
       } else {
-        PeripheralListView(
-          peripherals: peripherals,
+        DeviceListView(
+          devices: devices,
+          deviceStates: [:],
           showConnectionStatus: false,
-          primaryAction: onPeripheralAdd
+          primaryAction: onDeviceAdd
         )
       }
     }
   }
 }
 
-/// List view for displaying Bluetooth peripherals
-private struct PeripheralListView: View {
-  let peripherals: [BluetoothPeripheral]
+/// List view for displaying Bluetooth devices
+private struct DeviceListView: View {
+  let devices: [Device]
+  let deviceStates: [String: DeviceConnectionState]
   let showConnectionStatus: Bool
-  let primaryAction: (BluetoothPeripheral) -> Void
-  var secondaryAction: ((BluetoothPeripheral) -> Void)?
+  let primaryAction: (Device) -> Void
+  var secondaryAction: ((Device) -> Void)?
 
   var body: some View {
     List {
-      ForEach(peripherals) { peripheral in
-        PeripheralRowView(
-          peripheral: peripheral,
+      ForEach(devices) { device in
+        DeviceRowView(
+          device: device,
+          state: deviceStates[device.id] ?? .disconnected,
           showConnectionStatus: showConnectionStatus,
-          primaryAction: { primaryAction(peripheral) },
+          primaryAction: { primaryAction(device) },
           secondaryAction: secondaryAction.map { action in
-            { action(peripheral) }
+            { action(device) }
           }
         )
       }
@@ -138,19 +131,20 @@ private struct PeripheralListView: View {
   }
 }
 
-/// Row view for displaying individual Bluetooth peripheral
-private struct PeripheralRowView: View {
-  let peripheral: BluetoothPeripheral
+/// Row view for displaying individual Bluetooth device
+private struct DeviceRowView: View {
+  let device: Device
+  let state: DeviceConnectionState
   let showConnectionStatus: Bool
   let primaryAction: () -> Void
   var secondaryAction: (() -> Void)?
 
   var body: some View {
     HStack {
-      Text(peripheral.name)
+      Text(device.name)
       Spacer()
       if showConnectionStatus {
-        Button(peripheral.isConnected ? "Remove from PC" : "Connect to PC", action: primaryAction)
+        Button(state == .connected ? "Disconnect" : "Connect", action: primaryAction)
         Button(action: { secondaryAction?() }) {
           Image(systemName: "minus.circle")
             .foregroundColor(.red)

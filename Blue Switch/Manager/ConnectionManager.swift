@@ -1,5 +1,5 @@
+import Foundation
 import Network
-import SwiftUI
 
 /// Protocol defining the interface for managing network connections
 protocol NetworkConnectionManaging {
@@ -28,10 +28,6 @@ enum ConnectionError: Error {
 
 /// Manages network connections and message handling
 final class ConnectionManager: NetworkConnectionManaging {
-  // MARK: - Dependencies
-
-  @ObservedObject private var bluetoothStore = BluetoothPeripheralStore.shared
-
   // MARK: - Constants
 
   private let queue = DispatchQueue(label: "com.blueswitch.connection", qos: .userInitiated)
@@ -108,42 +104,6 @@ final class ConnectionManager: NetworkConnectionManaging {
     connection.start(queue: queue)
   }
 
-  func sendPeripheralSync(peripherals: [BluetoothPeripheral], to device: NetworkDevice) {
-    print("Attempting to sync peripherals to device: \(device.name)")
-
-    let connection = NWConnection(
-      host: NWEndpoint.Host(device.host),
-      port: NWEndpoint.Port(integerLiteral: UInt16(device.port)),
-      using: .tcp
-    )
-
-    connection.stateUpdateHandler = { [weak self] state in
-      guard let self = self else { return }
-      switch state {
-      case .ready:
-        print("Connection ready, sending peripherals sync...")
-        // Send sync command
-        self.send(message: DeviceCommand.syncPeripherals.rawValue, to: connection)
-
-        // Encode and send peripherals data
-        if let data = try? JSONEncoder().encode(peripherals),
-          let jsonString = String(data: data, encoding: .utf8)
-        {
-          self.send(message: jsonString, to: connection)
-          print("Peripherals data sent to \(device.name)")
-        }
-      case .failed(let error):
-        print("Failed to sync peripherals to \(device.name): \(error)")
-      case .cancelled:
-        print("Sync connection to \(device.name) was cancelled")
-      default:
-        break
-      }
-    }
-
-    connection.start(queue: queue)
-  }
-
   // MARK: - Private Setup Methods
 
   /// Sets up the connection handler for a given device
@@ -206,20 +166,12 @@ final class ConnectionManager: NetworkConnectionManaging {
       // Wait for the next message which will contain notification data
       break
     case .connectAll:
-      // Execute device connection
-      bluetoothStore.peripherals.forEach { peripheral in
-        bluetoothStore.connectPeripheral(peripheral)
-      }
-      // Send success response
-      send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
+      // TODO: Re-implement via DeviceManager
+      send(message: DeviceCommand.operationFailed.rawValue, to: connection)
 
     case .unregisterAll:
-      // Execute device disconnection
-      bluetoothStore.peripherals.forEach { peripheral in
-        bluetoothStore.unregisterFromPC(peripheral)
-      }
-      // Send success response
-      send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
+      // TODO: Re-implement via DeviceManager
+      send(message: DeviceCommand.operationFailed.rawValue, to: connection)
 
     case .syncPeripherals:
       // Wait for the next message which will contain peripherals data
@@ -249,17 +201,9 @@ final class ConnectionManager: NetworkConnectionManaging {
         print("Invalid notification format received")
       }
     case .syncPeripherals:
-      if let data = message.data(using: .utf8),
-        let peripherals = try? JSONDecoder().decode([BluetoothPeripheral].self, from: data)
-      {
-        print("Received peripherals sync data")
-        bluetoothStore.updatePeripherals(peripherals)
-        print("Peripherals updated successfully")
-        send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
-      } else {
-        print("Failed to process peripherals data")
-        send(message: DeviceCommand.operationFailed.rawValue, to: connection)
-      }
+      // TODO: Re-implement via DeviceManager using Device type
+      print("syncPeripherals not yet re-implemented")
+      send(message: DeviceCommand.operationFailed.rawValue, to: connection)
     default:
       break
     }

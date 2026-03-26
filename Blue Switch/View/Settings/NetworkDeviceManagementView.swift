@@ -71,7 +71,6 @@ struct NetworkDeviceManagementView: View {
 
 private struct RegisteredDevicesSectionView: View {
   // MARK: - Dependencies
-  @ObservedObject private var bluetoothStore = BluetoothPeripheralStore.shared
   @ObservedObject private var networkStore = NetworkDeviceStore.shared
 
   // MARK: - Properties
@@ -89,13 +88,7 @@ private struct RegisteredDevicesSectionView: View {
           devices: devices,
           buttonTitle: Constants.Strings.notify,
           action: onDeviceNotify,
-          onDelete: onDeviceRemove,
-          onSyncPeripherals: { device in
-            networkStore.sendPeripheralSync(
-              peripherals: bluetoothStore.peripherals,
-              to: device
-            )
-          }
+          onDelete: onDeviceRemove
         )
       }
     } header: {
@@ -141,20 +134,17 @@ private struct NetworkDeviceListView: View {
   let buttonTitle: String
   let action: (NetworkDevice) -> Void
   let onDelete: ((NetworkDevice) -> Void)?
-  let onSyncPeripherals: ((NetworkDevice) -> Void)?
 
   init(
     devices: [NetworkDevice],
     buttonTitle: String,
     action: @escaping (NetworkDevice) -> Void,
-    onDelete: ((NetworkDevice) -> Void)? = nil,
-    onSyncPeripherals: ((NetworkDevice) -> Void)? = nil
+    onDelete: ((NetworkDevice) -> Void)? = nil
   ) {
     self.devices = devices
     self.buttonTitle = buttonTitle
     self.action = action
     self.onDelete = onDelete
-    self.onSyncPeripherals = onSyncPeripherals
   }
 
   var body: some View {
@@ -166,14 +156,6 @@ private struct NetworkDeviceListView: View {
           Text(buttonTitle)
         }
         .disabled(!device.isActive)
-
-        if let onSync = onSyncPeripherals {
-          Button(action: { onSync(device) }) {
-            Image(systemName: "arrow.triangle.2.circlepath")
-              .foregroundColor(.blue)
-          }
-          .disabled(!device.isActive)
-        }
 
         if let onDelete = onDelete {
           Button(action: { onDelete(device) }) {

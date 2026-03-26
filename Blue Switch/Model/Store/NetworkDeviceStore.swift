@@ -172,6 +172,8 @@ enum DeviceCommand: String, Codable {
   case notification = "NOTIFICATION"
   case syncPeripherals = "SYNC_PERIPHERALS"
   case peripheralData = "PERIPHERAL_DATA"
+  case connectDevice = "CONNECT_DEVICE"
+  case disconnectDevice = "DISCONNECT_DEVICE"
 }
 
 // MARK: - Health Check Extension
@@ -253,8 +255,3 @@ extension NetworkDeviceStore {
   }
 }
 
-extension NetworkDeviceStore {
-  func sendPeripheralSync(peripherals: [BluetoothPeripheral], to device: NetworkDevice) {
-    connectionManager.sendPeripheralSync(peripherals: peripherals, to: device)
-  }
-}
