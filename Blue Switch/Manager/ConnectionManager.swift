@@ -1,4 +1,5 @@
 import Foundation
+import IOBluetooth
 import Network
 import os
 
@@ -178,6 +179,14 @@ final class ConnectionManager: NetworkConnectionManaging {
       // Wait for the next message which will contain peripherals data
       break
 
+    case .connectDevice:
+      // Wait for next message containing MAC address
+      break
+
+    case .disconnectDevice:
+      // Wait for next message containing MAC address
+      break
+
     default:
       Log.network.warning("Unsupported command")
       // Send error response
@@ -205,6 +214,54 @@ final class ConnectionManager: NetworkConnectionManaging {
       // TODO: Re-implement via DeviceManager using Device type
       Log.network.warning("syncPeripherals not yet re-implemented")
       send(message: DeviceCommand.operationFailed.rawValue, to: connection)
+
+    case .connectDevice:
+      // message is the MAC address of the device to connect
+      let macAddress = message.trimmingCharacters(in: .whitespacesAndNewlines)
+      Log.network.info("Received CONNECT_DEVICE for \(macAddress)")
+      if let device = DeviceManager.shared.registeredDevices.first(where: { $0.id == macAddress }) {
+        DeviceManager.shared.connect(device) { success in
+          if success {
+            Log.network.info("Connected \(device.name) via peer command")
+          } else {
+            Log.network.error("Failed to connect \(device.name) via peer command")
+          }
+        }
+        send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
+      } else {
+        Log.network.error("Device not found for MAC: \(macAddress)")
+        send(message: DeviceCommand.operationFailed.rawValue, to: connection)
+      }
+
+    case .disconnectDevice:
+      // message is the MAC address of the device to disconnect
+      let macAddress = message.trimmingCharacters(in: .whitespacesAndNewlines)
+      Log.network.info("Received DISCONNECT_DEVICE for \(macAddress)")
+      if let device = DeviceManager.shared.registeredDevices.first(where: { $0.id == macAddress }) {
+        DeviceManager.shared.disconnect(device) { success in
+          if success {
+            Log.network.info("Disconnected \(device.name) via peer command")
+          } else {
+            Log.network.error("Failed to disconnect \(device.name) via peer command")
+          }
+        }
+        send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
+      } else {
+        // Device not registered on this Mac — try direct IOBluetooth disconnect
+        Log.network.info("Device \(macAddress) not registered, attempting direct disconnect")
+        if let btDevice = IOBluetoothDevice(addressString: macAddress) {
+          if btDevice.responds(to: Selector(("remove"))) {
+            btDevice.perform(Selector(("remove")))
+          }
+          btDevice.closeConnection()
+          Log.network.info("Direct disconnected \(macAddress)")
+          send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
+        } else {
+          Log.network.error("Cannot find IOBluetoothDevice for \(macAddress)")
+          send(message: DeviceCommand.operationFailed.rawValue, to: connection)
+        }
+      }
+
     default:
       break
     }
