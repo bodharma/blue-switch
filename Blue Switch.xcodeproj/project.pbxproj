@@ -33,6 +33,7 @@
 		AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0004002CE9D690004D45F0 /* ActionRunner.swift */; };
 		AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005002CE9D690004D45F0 /* PeerNetwork.swift */; };
 		AA000701 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000700 /* AudioManager.swift */; };
+		AA000601 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000600 /* ShortcutManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -83,6 +84,7 @@
 		AA0004002CE9D690004D45F0 /* ActionRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionRunner.swift; sourceTree = "<group>"; };
 		AA0005002CE9D690004D45F0 /* PeerNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerNetwork.swift; sourceTree = "<group>"; };
 		AA000700 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
+		AA000600 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +142,7 @@
 				AA0005002CE9D690004D45F0 /* PeerNetwork.swift */,
 				076AB1FD2CE9D690004D45F0 /* ServiceBrowser.swift */,
 				076AB1FE2CE9D690004D45F0 /* ServicePublisher.swift */,
+				AA000600 /* ShortcutManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -421,6 +424,7 @@
 				AA0004012CE9D690004D45F0 /* ActionRunner.swift in Sources */,
 				AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */,
 				AA000701 /* AudioManager.swift in Sources */,
+				AA000601 /* ShortcutManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
