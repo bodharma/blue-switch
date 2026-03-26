@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import os
 
 /// Protocol defining the interface for managing network connections
 protocol NetworkConnectionManaging {
@@ -37,7 +38,7 @@ final class ConnectionManager: NetworkConnectionManaging {
 
   func connectToDevice(_ device: NetworkDevice, message: String) {
     guard let port = NWEndpoint.Port(rawValue: UInt16(device.port)) else {
-      print("Invalid port number: \(device.port)")
+      Log.network.error("Invalid port number: \(device.port)")
       return
     }
 
@@ -53,7 +54,7 @@ final class ConnectionManager: NetworkConnectionManaging {
 
   func send(message: String, to connection: NWConnection) {
     guard let data = message.data(using: messageEncoding) else {
-      print("Failed to encode message")
+      Log.network.error("Failed to encode message")
       return
     }
 
@@ -63,7 +64,7 @@ final class ConnectionManager: NetworkConnectionManaging {
         if let error = error {
           self.handleSendError(error)
         } else {
-          print("Message sent: \(message)")
+          Log.network.debug("Message sent: \(message)")
         }
       })
   }
@@ -77,7 +78,7 @@ final class ConnectionManager: NetworkConnectionManaging {
   }
 
   func sendNotification(to device: NetworkDevice, title: String, message: String) {
-    print("Attempting to send notification to device: \(device.name)")
+    Log.network.info("Attempting to send notification to device: \(device.name)")
     let connection = NWConnection(
       host: NWEndpoint.Host(device.host),
       port: NWEndpoint.Port(integerLiteral: UInt16(device.port)),
@@ -88,14 +89,14 @@ final class ConnectionManager: NetworkConnectionManaging {
       guard let self = self else { return }
       switch state {
       case .ready:
-        print("Connection ready, sending notification...")
+        Log.network.debug("Connection ready, sending notification...")
         self.send(message: DeviceCommand.notification.rawValue, to: connection)
         self.send(message: "\(title)|\(message)", to: connection)
-        print("Notification content sent to \(device.name)")
+        Log.network.info("Notification content sent to \(device.name)")
       case .failed(let error):
-        print("Failed to send notification to \(device.name): \(error)")
+        Log.network.error("Failed to send notification to \(device.name): \(error)")
       case .cancelled:
-        print("Notification connection to \(device.name) was cancelled")
+        Log.network.info("Notification connection to \(device.name) was cancelled")
       default:
         break
       }
@@ -114,13 +115,13 @@ final class ConnectionManager: NetworkConnectionManaging {
       guard let self = self else { return }
       switch state {
       case .ready:
-        print("Connected to \(device.name)")
+        Log.network.info("Connected to \(device.name)")
         self.send(message: message, to: connection)
         self.receive(on: connection)
       case .failed(let error):
         self.handleConnectionError(error, deviceName: device.name)
       case .cancelled:
-        print("Connection to \(device.name) was cancelled")
+        Log.network.info("Connection to \(device.name) was cancelled")
       default:
         break
       }
@@ -178,7 +179,7 @@ final class ConnectionManager: NetworkConnectionManaging {
       break
 
     default:
-      print("Unsupported command")
+      Log.network.warning("Unsupported command")
       // Send error response
       send(message: DeviceCommand.operationFailed.rawValue, to: connection)
     }
@@ -191,18 +192,18 @@ final class ConnectionManager: NetworkConnectionManaging {
     case .notification:
       let components = message.split(separator: "|")
       if components.count == 2 {
-        print("Received notification from remote device")
+        Log.network.info("Received notification from remote device")
         NotificationManager.showNotification(
           title: String(components[0]),
           body: String(components[1])
         )
-        print("Notification displayed successfully")
+        Log.network.info("Notification displayed successfully")
       } else {
-        print("Invalid notification format received")
+        Log.network.error("Invalid notification format received")
       }
     case .syncPeripherals:
       // TODO: Re-implement via DeviceManager using Device type
-      print("syncPeripherals not yet re-implemented")
+      Log.network.warning("syncPeripherals not yet re-implemented")
       send(message: DeviceCommand.operationFailed.rawValue, to: connection)
     default:
       break
@@ -213,21 +214,21 @@ final class ConnectionManager: NetworkConnectionManaging {
   // MARK: - Error Handling Methods
 
   private func handleConnectionError(_ error: Error, deviceName: String) {
-    print("Failed to connect to \(deviceName): \(error)")
+    Log.network.error("Failed to connect to \(deviceName): \(error)")
     // Update device information
     NetworkDeviceStore.shared.discoveredNetworkDevices.forEach { device in
       if device.name == deviceName {
         NetworkDeviceStore.shared.updateNetworkDevice(device)
-        print("Updated information for \(deviceName)")
+        Log.network.info("Updated information for \(deviceName)")
       }
     }
   }
 
   private func handleSendError(_ error: Error) {
-    print("Send error: \(error)")
+    Log.network.error("Send error: \(error)")
   }
 
   private func handleReceiveError(_ error: Error) {
-    print("Receive error: \(error)")
+    Log.network.error("Receive error: \(error)")
   }
 }

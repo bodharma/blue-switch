@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import os
 
 /// Protocol defining the interface for service discovery
 protocol ServiceBrowsing {
@@ -43,7 +44,7 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
   func netServiceBrowser(
     _ browser: NetServiceBrowser, didFind service: NetService, moreComing: Bool
   ) {
-    print("Service discovered: \(service.name)")
+    Log.network.info("Service discovered: \(service.name)")
     services.append(service)
     service.delegate = self
     service.resolve(withTimeout: timeout)
@@ -52,7 +53,7 @@ extension ServiceBrowser: NetServiceBrowserDelegate {
   func netServiceBrowser(
     _ browser: NetServiceBrowser, didRemove service: NetService, moreComing: Bool
   ) {
-    print("Service removed: \(service.name)")
+    Log.network.info("Service removed: \(service.name)")
     services.removeAll { $0 == service }
     DispatchQueue.main.async {
       NetworkDeviceStore.shared.updateDeviceIsActive(id: service.name, isActive: false)
@@ -80,7 +81,7 @@ extension ServiceBrowser: NetServiceDelegate {
         DispatchQueue.main.async {
           NetworkDeviceStore.shared.addDiscoveredNetworkDevice(device)
           NetworkDeviceStore.shared.updateNetworkDevice(device)
-          print("Device information updated: \(sender.name)")
+          Log.network.info("Device information updated: \(sender.name)")
         }
         break
       }

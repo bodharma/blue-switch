@@ -1,6 +1,7 @@
 import Foundation
 import Network
 import SwiftUI
+import os
 
 /// Protocol defining the interface for network device management operations
 protocol NetworkDeviceManageable {
@@ -145,7 +146,7 @@ final class NetworkDeviceStore: ObservableObject, NetworkDeviceManageable {
       let encoded = try JSONEncoder().encode(networkDevices)
       networkDevicesData = encoded
     } catch {
-      print("Failed to save devices: \(error)")
+      Log.network.error("Failed to save devices: \(error)")
     }
   }
 
@@ -153,7 +154,7 @@ final class NetworkDeviceStore: ObservableObject, NetworkDeviceManageable {
     do {
       networkDevices = try JSONDecoder().decode([NetworkDevice].self, from: networkDevicesData)
     } catch {
-      print("Failed to load devices: \(error)")
+      Log.network.error("Failed to load devices: \(error)")
     }
   }
 
@@ -187,13 +188,13 @@ extension NetworkDeviceStore {
       DispatchQueue.main.async {
         switch result {
         case .success:
-          print("Health check successful with \(device.name)")
+          Log.network.info("Health check successful with \(device.name)")
           completion(result)
         case .failure(let error):
-          print("Health check failed with \(device.name): \(error)")
+          Log.network.error("Health check failed with \(device.name): \(error)")
           completion(result)
         case .timeout:
-          print("Health check timed out with \(device.name)")
+          Log.network.warning("Health check timed out with \(device.name)")
           completion(result)
         }
       }
@@ -203,7 +204,7 @@ extension NetworkDeviceStore {
   /// Executes a command on the connected device
   func executeCommand(_ command: DeviceCommand, completion: @escaping (Bool) -> Void) {
     guard let device = networkDevices.first else {
-      print("No connected devices found")
+      Log.network.warning("No connected devices found")
       completion(false)
       return
     }
@@ -221,7 +222,7 @@ extension NetworkDeviceStore {
         let message = command.rawValue
         self.connectionManager.send(message: message, to: connection)
       case .failed(let error):
-        print("Command execution failed: \(error)")
+        Log.network.error("Command execution failed: \(error)")
         completion(false)
       case .cancelled:
         completion(false)
@@ -232,7 +233,7 @@ extension NetworkDeviceStore {
 
     connection.receiveMessage { data, _, isComplete, error in
       if let error = error {
-        print("Failed to receive response: \(error)")
+        Log.network.error("Failed to receive response: \(error)")
         completion(false)
         return
       }

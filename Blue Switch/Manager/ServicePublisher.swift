@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import os
 
 /// Protocol defining the interface for network service publishing
 protocol NetworkNetworkServicePublishable {
@@ -71,13 +72,13 @@ final class ServicePublisher: NSObject, NetworkNetworkServicePublishable {
     switch state {
     case .ready:
       if let port = listener?.port?.rawValue {
-        print("Listener ready: Port \(port)")
+        Log.network.info("Listener ready: Port \(port)")
         publishService(port: Int(port))
       }
     case .failed(let error):
-      print("Listener error: \(error)")
+      Log.network.error("Listener error: \(error)")
     case .cancelled:
-      print("Listener was cancelled")
+      Log.network.info("Listener was cancelled")
     default:
       break
     }
@@ -91,7 +92,7 @@ final class ServicePublisher: NSObject, NetworkNetworkServicePublishable {
 
   /// Handles errors that occur during listener setup
   private func handleListenerError(_ error: Error) {
-    print("Failed to create listener: \(error)")
+    Log.network.error("Failed to create listener: \(error)")
   }
 
   /// Publishes the service with the specified port
@@ -111,10 +112,10 @@ final class ServicePublisher: NSObject, NetworkNetworkServicePublishable {
 
 extension ServicePublisher: NetServiceDelegate {
   func netServiceDidPublish(_ sender: NetService) {
-    print("Service published successfully: \(sender.name)")
+    Log.network.info("Service published successfully: \(sender.name)")
   }
 
   func netService(_ sender: NetService, didNotPublish errorDict: [String: NSNumber]) {
-    print("Failed to publish service: \(errorDict)")
+    Log.network.error("Failed to publish service: \(errorDict)")
   }
 }
