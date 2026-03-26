@@ -235,22 +235,23 @@ final class ConnectionManager: NetworkConnectionManaging {
 
     case .disconnectDevice:
       // message is the MAC address of the device to disconnect
-      // IMPORTANT: Only closeConnection — do NOT remove/unpair.
-      // The other Mac needs the pairing keys to remain so it can reconnect.
+      // Must use "remove" to prevent macOS from auto-reconnecting HID devices.
+      // The requesting Mac will re-pair the device from scratch.
       let macAddress = message.trimmingCharacters(in: .whitespacesAndNewlines)
       Log.network.info("Received DISCONNECT_DEVICE for \(macAddress)")
       if let btDevice = IOBluetoothDevice(addressString: macAddress) {
-        if btDevice.isConnected() {
-          let status = btDevice.closeConnection()
-          Log.network.info("closeConnection for \(macAddress): \(status)")
-          send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
-        } else {
-          Log.network.info("Device \(macAddress) already disconnected")
-          send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
+        // Remove device to prevent auto-reconnect
+        if btDevice.responds(to: Selector(("remove"))) {
+          btDevice.perform(Selector(("remove")))
+          Log.network.info("Removed (unpaired) device \(macAddress) to prevent auto-reconnect")
         }
+        if btDevice.isConnected() {
+          btDevice.closeConnection()
+        }
+        send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
       } else {
-        Log.network.error("Cannot find IOBluetoothDevice for \(macAddress)")
-        send(message: DeviceCommand.operationFailed.rawValue, to: connection)
+        Log.network.info("Device \(macAddress) not found (may already be removed)")
+        send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
       }
 
     default:
