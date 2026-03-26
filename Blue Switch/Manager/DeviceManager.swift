@@ -149,72 +149,18 @@ final class DeviceManager: NSObject, ObservableObject {
 
         let pairResult = pair?.start() ?? kIOReturnError
         if pairResult != kIOReturnSuccess {
-            // Pairing start may fail if device has stale pairing info.
-            // Remove stale info and re-pair fresh.
-            Log.bluetooth.info("Pair start returned \(pairResult) for \(device.name), removing stale pairing and retrying...")
+            // Device is already paired (pairing keys exist from USB setup).
+            // Just use async openConnection — no need to re-pair.
+            Log.bluetooth.info("Pair start returned \(pairResult) for \(device.name) — already paired, using openConnection...")
             pendingPairCompletions.removeValue(forKey: device.id)
 
-            // Remove stale pairing info so we can re-pair fresh
-            if ioDevice.responds(to: Selector(("remove"))) {
-                ioDevice.perform(Selector(("remove")))
-                Log.bluetooth.info("Removed stale pairing for \(device.name)")
-            }
-
-            // Wait a moment for BT stack to process removal, then re-pair
-            queue.asyncAfter(deadline: .now() + 1.0) { [weak self] in
-                guard let self else { return }
-
-                // Create fresh pair request
-                guard let freshDevice = IOBluetoothDevice(addressString: device.id) else {
-                    Log.bluetooth.error("Cannot find device after removal: \(device.name)")
-                    self.cancelTimeout(for: device.id)
-                    DispatchQueue.main.async {
-                        self.handleConnectFailure(device: device, completion: completion)
-                    }
-                    return
-                }
-
-                let freshPair = IOBluetoothDevicePair(device: freshDevice)
-                freshPair?.delegate = self
-                self.pendingPairCompletions[device.id] = { [weak self] pairSuccess in
-                    guard let self else { return }
-                    self.cancelTimeout(for: device.id)
-
-                    if pairSuccess {
-                        Log.bluetooth.info("Re-pair succeeded for \(device.name), opening connection...")
-                        self.pendingConnectCompletions[device.id] = completion
-                        let status = freshDevice.openConnection(self, withPageTimeout: 15000, authenticationRequired: false)
-                        if status != kIOReturnSuccess {
-                            Log.bluetooth.error("openConnection after re-pair failed: \(status)")
-                            self.pendingConnectCompletions.removeValue(forKey: device.id)
-                            DispatchQueue.main.async {
-                                self.handleConnectFailure(device: device, completion: completion)
-                            }
-                        }
-                    } else {
-                        Log.bluetooth.error("Re-pair failed for \(device.name)")
-                        DispatchQueue.main.async {
-                            self.handleConnectFailure(device: device, completion: completion)
-                        }
-                    }
-                }
-
-                let rePairResult = freshPair?.start() ?? kIOReturnError
-                if rePairResult != kIOReturnSuccess {
-                    // Re-pair also failed — try async openConnection as last resort
-                    Log.bluetooth.info("Re-pair start also returned \(rePairResult), trying async openConnection...")
-                    self.pendingPairCompletions.removeValue(forKey: device.id)
-                    self.pendingConnectCompletions[device.id] = completion
-                    let status = freshDevice.openConnection(self, withPageTimeout: 15000, authenticationRequired: false)
-                    if status != kIOReturnSuccess {
-                        Log.bluetooth.error("Last resort openConnection failed: \(status)")
-                        self.pendingConnectCompletions.removeValue(forKey: device.id)
-                        self.cancelTimeout(for: device.id)
-                        DispatchQueue.main.async {
-                            self.handleConnectFailure(device: device, completion: completion)
-                        }
-                    }
-                }
+            pendingConnectCompletions[device.id] = completion
+            let status = ioDevice.openConnection(self, withPageTimeout: 15000, authenticationRequired: false)
+            if status != kIOReturnSuccess {
+                Log.bluetooth.error("openConnection returned \(status) for \(device.name)")
+                pendingConnectCompletions.removeValue(forKey: device.id)
+                cancelTimeout(for: device.id)
+                handleConnectFailure(device: device, completion: completion)
             }
         }
     }

@@ -235,22 +235,41 @@ final class ConnectionManager: NetworkConnectionManaging {
 
     case .disconnectDevice:
       // message is the MAC address of the device to disconnect
-      // Must use "remove" to prevent macOS from auto-reconnecting HID devices.
-      // The requesting Mac will re-pair the device from scratch.
+      // Strategy: closeConnection + keep rejecting auto-reconnect for 10s.
+      // Do NOT use "remove" — that deletes pairing keys and the device
+      // can only be re-paired via USB cable.
       let macAddress = message.trimmingCharacters(in: .whitespacesAndNewlines)
       Log.network.info("Received DISCONNECT_DEVICE for \(macAddress)")
       if let btDevice = IOBluetoothDevice(addressString: macAddress) {
-        // Remove device to prevent auto-reconnect
-        if btDevice.responds(to: Selector(("remove"))) {
-          btDevice.perform(Selector(("remove")))
-          Log.network.info("Removed (unpaired) device \(macAddress) to prevent auto-reconnect")
+        btDevice.closeConnection()
+        Log.network.info("Closed connection for \(macAddress)")
+
+        // Keep rejecting auto-reconnect for 10 seconds
+        // This gives the other Mac time to grab the device
+        var rejectCount = 0
+        let rejectTimer = DispatchSource.makeTimerSource(queue: .global())
+        rejectTimer.schedule(deadline: .now() + 0.5, repeating: 0.5)
+        rejectTimer.setEventHandler {
+          if btDevice.isConnected() {
+            btDevice.closeConnection()
+            rejectCount += 1
+            Log.network.debug("Rejected auto-reconnect #\(rejectCount) for \(macAddress)")
+          }
+          if rejectCount >= 20 { // 10 seconds
+            rejectTimer.cancel()
+          }
         }
-        if btDevice.isConnected() {
-          btDevice.closeConnection()
+        rejectTimer.resume()
+
+        // Cancel after 10s regardless
+        DispatchQueue.global().asyncAfter(deadline: .now() + 10) {
+          rejectTimer.cancel()
+          Log.network.info("Stopped rejecting auto-reconnect for \(macAddress)")
         }
+
         send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
       } else {
-        Log.network.info("Device \(macAddress) not found (may already be removed)")
+        Log.network.info("Device \(macAddress) not found")
         send(message: DeviceCommand.operationSuccess.rawValue, to: connection)
       }
 
