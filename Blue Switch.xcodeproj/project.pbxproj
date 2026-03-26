@@ -34,6 +34,8 @@
 		AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA0005002CE9D690004D45F0 /* PeerNetwork.swift */; };
 		AA000701 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000700 /* AudioManager.swift */; };
 		AA000601 /* ShortcutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000600 /* ShortcutManager.swift */; };
+		AA000801 /* SocketProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000800 /* SocketProtocol.swift */; };
+		AA000803 /* AppCommunicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA000802 /* AppCommunicator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -85,6 +87,8 @@
 		AA0005002CE9D690004D45F0 /* PeerNetwork.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerNetwork.swift; sourceTree = "<group>"; };
 		AA000700 /* AudioManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioManager.swift; sourceTree = "<group>"; };
 		AA000600 /* ShortcutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortcutManager.swift; sourceTree = "<group>"; };
+		AA000800 /* SocketProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProtocol.swift; sourceTree = "<group>"; };
+		AA000802 /* AppCommunicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppCommunicator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -143,6 +147,7 @@
 				076AB1FD2CE9D690004D45F0 /* ServiceBrowser.swift */,
 				076AB1FE2CE9D690004D45F0 /* ServicePublisher.swift */,
 				AA000600 /* ShortcutManager.swift */,
+				AA000802 /* AppCommunicator.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -153,6 +158,7 @@
 				076AB2012CE9D690004D45F0 /* NetworkDevice.swift */,
 				AA0001002CE9D690004D45F0 /* Device.swift */,
 				AA0001012CE9D690004D45F0 /* AppPreferences.swift */,
+				AA000800 /* SocketProtocol.swift */,
 			);
 			path = Entity;
 			sourceTree = "<group>";
@@ -425,6 +431,8 @@
 				AA0005012CE9D690004D45F0 /* PeerNetwork.swift in Sources */,
 				AA000701 /* AudioManager.swift in Sources */,
 				AA000601 /* ShortcutManager.swift in Sources */,
+				AA000801 /* SocketProtocol.swift in Sources */,
+				AA000803 /* AppCommunicator.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
