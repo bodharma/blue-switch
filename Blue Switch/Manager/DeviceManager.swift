@@ -62,8 +62,14 @@ final class DeviceManager: NSObject, ObservableObject {
             return
         }
         registeredDevices.append(device)
-        deviceStates[device.id] = .disconnected
-        Log.bluetooth.info("Registered device: \(device.name) [\(device.id)]")
+        // Detect initial state from IOBluetooth
+        if let ioDevice = IOBluetoothDevice(addressString: device.id), ioDevice.isConnected() {
+            deviceStates[device.id] = .connected
+            Log.bluetooth.info("Registered device: \(device.name) [\(device.id)] — already connected")
+        } else {
+            deviceStates[device.id] = .disconnected
+            Log.bluetooth.info("Registered device: \(device.name) [\(device.id)] — disconnected")
+        }
     }
 
     /// Unregisters a device and cancels any in-flight operations.
@@ -307,18 +313,23 @@ final class DeviceManager: NSObject, ObservableObject {
 
     private func handleConnectFailure(device: Device, completion: @escaping (Bool) -> Void) {
         let currentRetry = retryCount[device.id] ?? 0
+
+        // Reset state synchronously so retry can proceed
+        DispatchQueue.main.async {
+            self.deviceStates[device.id] = .disconnected
+        }
+
         if currentRetry < Self.maxRetries {
             retryCount[device.id] = currentRetry + 1
             Log.bluetooth.info("Retrying connect for \(device.name) (attempt \(currentRetry + 1))")
-            DispatchQueue.main.async {
-                self.deviceStates[device.id] = .disconnected
+            // Delay retry to let state propagate
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.connect(device, completion: completion)
             }
-            connect(device, completion: completion)
         } else {
             Log.bluetooth.error("Connect failed for \(device.name) after \(Self.maxRetries) retries")
             retryCount[device.id] = 0
             DispatchQueue.main.async {
-                self.deviceStates[device.id] = .disconnected
                 completion(false)
             }
         }

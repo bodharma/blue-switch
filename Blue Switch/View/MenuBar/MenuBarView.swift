@@ -97,19 +97,35 @@ final class MenuBarView: MenuBarPresentable {
 
     private func createDeviceMenuItem(for device: Device, deviceManager: DeviceManager) -> NSMenuItem {
         let state = deviceManager.deviceStates[device.id] ?? .disconnected
-        let typeIcon = sfSymbolName(for: device.type)
         let statusGlyph = statusGlyph(for: state)
         let batteryText = batteryText(for: device)
+        let stateLabel = stateLabel(for: state)
 
-        // Build title: icon  name   battery  status
-        let title = "\(typeIcon)  \(device.name)   \(batteryText)  \(statusGlyph)"
+        let title = "\(device.name)  \(batteryText)  \(statusGlyph) \(stateLabel)"
         let item = NSMenuItem(
             title: title,
             action: #selector(AppDelegate.menuSwitchDevice(_:)),
             keyEquivalent: ""
         )
         item.representedObject = device.id
+
+        // Set SF Symbol as proper image
+        let symbolName = sfSymbolName(for: device.type)
+        if let image = NSImage(systemSymbolName: symbolName, accessibilityDescription: device.type.rawValue) {
+            image.isTemplate = true
+            item.image = image
+        }
+
         return item
+    }
+
+    private func stateLabel(for state: DeviceConnectionState) -> String {
+        switch state {
+        case .connected: return "Connected"
+        case .connecting: return "Connecting..."
+        case .disconnecting: return "Disconnecting..."
+        case .disconnected: return "Disconnected"
+        }
     }
 
     // MARK: - Helpers

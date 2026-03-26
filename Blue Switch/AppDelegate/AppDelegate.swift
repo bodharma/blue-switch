@@ -138,15 +138,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     // MARK: - Action Handlers
 
     @objc private func handleClick(_ sender: NSStatusBarButton) {
-        guard let event = NSApp.currentEvent else { return }
+        guard let event = NSApp.currentEvent else {
+            showMenu()
+            return
+        }
 
         switch event.type {
-        case .leftMouseUp:
-            handleLeftClick()
         case .rightMouseUp:
             showMenu()
         default:
-            break
+            // Left click or any other — show the full menu
+            showMenu()
         }
     }
 
