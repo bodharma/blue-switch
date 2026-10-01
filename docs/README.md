@@ -160,6 +160,14 @@ This setup includes:
 4. Push to the branch
 5. Create a Pull Request
 
+## Bluetooth pairing during host switching
+
+Blue Switch reconnects saved peripherals using their existing Bluetooth pairing.
+An unavailable peripheral or peer must not trigger a new pairing attempt. Pair new
+peripherals explicitly in macOS Bluetooth settings before registering them. If a
+pairing key was already lost, pair the peripheral again in macOS settings; Blue
+Switch cannot restore that key.
+
 ## 📜 License
 
 This project is licensed under the GNU General Public License v3.0. See the [LICENSE](https://github.com/HoshimuraYuto/blue-switch/blob/main/LICENSE) file for details.

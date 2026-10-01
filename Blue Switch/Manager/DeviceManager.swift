@@ -37,7 +37,6 @@ final class DeviceManager: NSObject, ObservableObject {
     // MARK: - Private Properties
 
     private var centralManager: CBCentralManager?
-    private var pendingPairCompletions: [String: (Bool) -> Void] = [:]
     private var pendingConnectCompletions: [String: (Bool) -> Void] = [:]
     private var connectTimeouts: [String: DispatchWorkItem] = [:]
     private var retryCount: [String: Int] = [:]
@@ -79,16 +78,22 @@ final class DeviceManager: NSObject, ObservableObject {
         registeredDevices.removeAll { $0.id == device.id }
         deviceStates.removeValue(forKey: device.id)
         retryCount.removeValue(forKey: device.id)
+        if let completion = pendingConnectCompletions.removeValue(forKey: device.id) {
+            completion(false)
+        }
         Log.bluetooth.info("Unregistered device: \(device.name) [\(device.id)]")
     }
 
     // MARK: - Connect
 
-    /// Connects to a Bluetooth device using IOBluetooth pairing and connection.
-    ///
-    /// The flow is: pair (if needed) -> openConnection. A 10-second timeout is applied,
-    /// with one automatic retry on failure.
+    /// Reconnects using the existing Bluetooth bond, with a 20-second timeout and two retries.
+    /// Pairing belongs in macOS Bluetooth settings; switching must never create or replace a bond.
     func connect(_ device: Device, completion: @escaping (Bool) -> Void) {
+        if !Thread.isMainThread {
+            DispatchQueue.main.async { self.connect(device, completion: completion) }
+            return
+        }
+
         guard bluetoothPoweredOn else {
             Log.bluetooth.error("Cannot connect \(device.name): Bluetooth is off")
             completion(false)
@@ -101,6 +106,12 @@ final class DeviceManager: NSObject, ObservableObject {
             return
         }
 
+        guard ioDevice.isPaired() else {
+            Log.bluetooth.error("Cannot connect \(device.name): pair it in macOS Bluetooth settings first")
+            completion(false)
+            return
+        }
+
         let currentState = deviceStates[device.id] ?? .disconnected
         guard currentState == .disconnected else {
             Log.bluetooth.warning("Cannot connect \(device.name): state is \(currentState)")
@@ -109,59 +120,27 @@ final class DeviceManager: NSObject, ObservableObject {
         }
 
         deviceStates[device.id] = .connecting
+        pendingConnectCompletions[device.id] = completion
         Log.bluetooth.info("Connecting to \(device.name)...")
 
-        // Set up timeout
         let timeout = DispatchWorkItem { [weak self] in
-            guard let self = self else { return }
-            Log.bluetooth.warning("Connect timeout for \(device.name)")
-            self.handleConnectFailure(device: device, completion: completion)
-        }
-        connectTimeouts[device.id] = timeout
-        queue.asyncAfter(deadline: .now() + Self.connectTimeoutSeconds, execute: timeout)
-
-        // Pair
-        let pair = IOBluetoothDevicePair(device: ioDevice)
-        pair?.delegate = self
-        pendingPairCompletions[device.id] = { [weak self] pairSuccess in
-            guard let self = self else { return }
-            self.cancelTimeout(for: device.id)
-
-            guard pairSuccess else {
-                self.handleConnectFailure(device: device, completion: completion)
+            guard let self = self,
+                  let pending = self.pendingConnectCompletions.removeValue(forKey: device.id) else {
                 return
             }
-
-            // Open connection
-            let status = ioDevice.openConnection()
-            if status == kIOReturnSuccess {
-                DispatchQueue.main.async {
-                    self.deviceStates[device.id] = .connected
-                    self.retryCount[device.id] = 0
-                    Log.bluetooth.info("Connected to \(device.name)")
-                    completion(true)
-                }
-            } else {
-                Log.bluetooth.error("openConnection failed for \(device.name): \(status)")
-                self.handleConnectFailure(device: device, completion: completion)
-            }
+            self.cancelTimeout(for: device.id)
+            Log.bluetooth.warning("Connect timeout for \(device.name)")
+            self.handleConnectFailure(device: device, completion: pending)
         }
+        connectTimeouts[device.id] = timeout
+        DispatchQueue.main.asyncAfter(deadline: .now() + Self.connectTimeoutSeconds, execute: timeout)
 
-        let pairResult = pair?.start() ?? kIOReturnError
-        if pairResult != kIOReturnSuccess {
-            // Device is already paired (pairing keys exist from USB setup).
-            // Just use async openConnection — no need to re-pair.
-            Log.bluetooth.info("Pair start returned \(pairResult) for \(device.name) — already paired, using openConnection...")
-            pendingPairCompletions.removeValue(forKey: device.id)
-
-            pendingConnectCompletions[device.id] = completion
-            let status = ioDevice.openConnection(self, withPageTimeout: 15000, authenticationRequired: false)
-            if status != kIOReturnSuccess {
-                Log.bluetooth.error("openConnection returned \(status) for \(device.name)")
-                pendingConnectCompletions.removeValue(forKey: device.id)
-                cancelTimeout(for: device.id)
-                handleConnectFailure(device: device, completion: completion)
-            }
+        let status = ioDevice.openConnection(self, withPageTimeout: 15000, authenticationRequired: false)
+        if status != kIOReturnSuccess {
+            Log.bluetooth.error("openConnection returned \(status) for \(device.name)")
+            pendingConnectCompletions.removeValue(forKey: device.id)
+            cancelTimeout(for: device.id)
+            handleConnectFailure(device: device, completion: completion)
         }
     }
 
@@ -311,16 +290,16 @@ final class DeviceManager: NSObject, ObservableObject {
     private func handleConnectFailure(device: Device, completion: @escaping (Bool) -> Void) {
         let currentRetry = retryCount[device.id] ?? 0
 
-        // Reset state synchronously so retry can proceed
-        DispatchQueue.main.async {
-            self.deviceStates[device.id] = .disconnected
-        }
+        deviceStates[device.id] = .disconnected
 
         if currentRetry < Self.maxRetries {
             retryCount[device.id] = currentRetry + 1
             Log.bluetooth.info("Retrying connect for \(device.name) (attempt \(currentRetry + 1))")
-            // Delay retry to let state propagate
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                guard self.registeredDevices.contains(where: { $0.id == device.id }) else {
+                    completion(false)
+                    return
+                }
                 self.connect(device, completion: completion)
             }
         } else {
@@ -366,60 +345,32 @@ extension DeviceManager: CBCentralManagerDelegate {
     }
 }
 
-// MARK: - IOBluetoothDevicePairDelegate
-
-extension DeviceManager: IOBluetoothDevicePairDelegate {
-    func devicePairingFinished(_ sender: Any?, error: IOReturn) {
-        guard let pair = sender as? IOBluetoothDevicePair,
-              let address = pair.device()?.addressString else {
-            return
-        }
-
-        let success = error == kIOReturnSuccess
-        if success {
-            Log.bluetooth.info("Pairing succeeded for \(address)")
-        } else {
-            Log.bluetooth.error("Pairing failed for \(address): \(error)")
-        }
-
-        if let completion = pendingPairCompletions.removeValue(forKey: address) {
-            completion(success)
-        }
-    }
-}
-
 // MARK: - IOBluetoothDevice Connection Callback
 
 extension DeviceManager {
-    /// Called by IOBluetooth when an async openConnection completes
-    func connectionComplete(_ device: IOBluetoothDevice!, status: IOReturn) {
+    /// Called by IOBluetooth when an async openConnection completes.
+    @objc func connectionComplete(_ device: IOBluetoothDevice!, status: IOReturn) {
         guard let address = device?.addressString else { return }
 
-        cancelTimeout(for: address)
+        DispatchQueue.main.async {
+            guard let completion = self.pendingConnectCompletions.removeValue(forKey: address) else {
+                return
+            }
+            self.cancelTimeout(for: address)
 
-        let success = status == kIOReturnSuccess && (device?.isConnected() ?? false)
-
-        if success {
-            Log.bluetooth.info("Async connection succeeded for \(address)")
-            DispatchQueue.main.async {
+            let success = status == kIOReturnSuccess && (device?.isConnected() ?? false)
+            if success {
+                Log.bluetooth.info("Async connection succeeded for \(address)")
                 self.deviceStates[address] = .connected
                 self.retryCount[address] = 0
-            }
-        } else {
-            Log.bluetooth.error("Async connection failed for \(address): \(status)")
-        }
-
-        if let completion = pendingConnectCompletions.removeValue(forKey: address) {
-            if success {
-                DispatchQueue.main.async { completion(true) }
+                completion(true)
             } else {
-                // Find the device to retry
-                if let dev = registeredDevices.first(where: { $0.id == address }) {
-                    DispatchQueue.main.async {
-                        self.handleConnectFailure(device: dev, completion: completion)
-                    }
+                Log.bluetooth.error("Async connection failed for \(address): \(status)")
+                if let registered = self.registeredDevices.first(where: { $0.id == address }) {
+                    self.handleConnectFailure(device: registered, completion: completion)
                 } else {
-                    DispatchQueue.main.async { completion(false) }
+                    self.deviceStates[address] = .disconnected
+                    completion(false)
                 }
             }
         }
